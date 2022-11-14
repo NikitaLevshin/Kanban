@@ -1,30 +1,26 @@
-package model;
+package ru.yandex.practicum.model;
 
 public class SubTask extends Task {
 
     private int epicId;
 
-    public SubTask(String name, String description, int id, int epicId) {
-        super(name, description, id);
+    public SubTask(String name, String description, int epicId) {
+        super(name, description);
         this.epicId = epicId;
-        status = STATUS[0];
+        this.status = TaskStatus.NEW;
     }
 
     public int getEpicId() {
         return epicId;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(int statusKey) {
-        status = STATUS[statusKey];
+    public void setEpicId(int epicId) {
+        this.epicId = epicId;
     }
 
     @Override
     public String toString() {
-        return "model.SubTask{" +
+        return "ru.yandex.practicum.model.SubTask{" +
                 "epicId=" + epicId +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
