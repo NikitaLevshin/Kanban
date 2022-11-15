@@ -6,10 +6,8 @@ import java.util.ArrayList;
 
 public class Epic extends Task{
 
-    private final ArrayList<SubTask> subTasks = new ArrayList<>();
-    /* оставил здесь в списке subtask, т.к. не знаю как получить все сабтаски здесь только по id
-        для метода updateStatus
-     */
+    private final ArrayList<Integer> subTasks = new ArrayList<>();
+
     private TaskStatus status;
 
     public Epic(String name, String description) {
@@ -18,19 +16,17 @@ public class Epic extends Task{
     }
 
     public void addSubTask(SubTask subTask) {
-        subTasks.add(subTask);
+        subTasks.add(subTask.getId());
     }
 
-    public void updateStatus() {
+    public void updateStatus(ArrayList<SubTask> subTask) {
         int countNew = 0;
         int countDone = 0;
-        for (int i = 0; i < subTasks.size(); i++) {
-            SubTask oneSubTask = subTasks.get(i);
+        for (int i = 0; i < subTask.size(); i++) {
+            SubTask oneSubTask = subTask.get(i);
                 switch (oneSubTask.getStatus()) {
                     case NEW:
                         countNew++;
-                        break;
-                    case IN_PROGRESS:
                         break;
                     case DONE:
                         countDone++;
@@ -46,7 +42,7 @@ public class Epic extends Task{
             }
     }
 
-    public ArrayList<SubTask> getSubTasks() {
+    public ArrayList<Integer> getSubTasks() {
         return subTasks;
     }
 
@@ -55,16 +51,9 @@ public class Epic extends Task{
     }
 
     public void removeOneSubTask(SubTask subTask) {
-        subTasks.remove(subTask);
+        subTasks.remove(subTask.getId());
     }
 
-    public ArrayList<Integer> getSubTasksId() {
-        ArrayList<Integer> result = new ArrayList<>();
-        for (int i = 0; i < subTasks.size(); i++) {
-            result.add(subTasks.get(i).getId());
-        }
-        return result;
-    }
 
     @Override
     public String toString() {

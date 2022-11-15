@@ -46,17 +46,19 @@ public class TaskManager {
 
     //получаем задачи по её идентификатору
     public Task getTaskById(int id) {
-        return taskMap.get(id);
+        if (taskMap.get(id) != null) {
+            return taskMap.get(id);
+        } return null;
     }
 
     public SubTask getSubTaskById(int id) {
-        if (subTaskMap.get(id).getId() == id) {
+        if (subTaskMap.get(id) != null) {
             return subTaskMap.get(id);
         } return null;
     }
 
     public Epic getEpicById(int id) {
-        if (epicMap.get(id).getId() == id) {
+        if (epicMap.get(id) != null) {
             return epicMap.get(id);
         } return null;
     }
@@ -78,7 +80,11 @@ public class TaskManager {
     }
 
     public ArrayList<SubTask> getAllSubTasksInEpic(Epic epic) {
-        ArrayList<SubTask> result = new ArrayList<>(epic.getSubTasks());
+        ArrayList<Integer> ids = new ArrayList<>(epic.getSubTasks());
+        ArrayList<SubTask> result = new ArrayList<>();
+        for (int i = 0; i < ids.size(); i++) {
+            result.add(subTaskMap.get(ids.get(i)));
+        }
         return result;
     }
 
@@ -91,11 +97,12 @@ public class TaskManager {
         Epic oneEpic = getEpicById(subTaskMap.get(id).getEpicId());
         oneEpic.removeOneSubTask(subTaskMap.get(id));
         subTaskMap.remove(id);
+        oneEpic.updateStatus(getAllSubTasksInEpic(oneEpic));
     }
 
     public void removeEpicById(int id) {
         Epic oneEpic = epicMap.get(id);
-        for (Integer ids : oneEpic.getSubTasksId()) {
+        for (Integer ids : oneEpic.getSubTasks()) {
             subTaskMap.remove(ids);
         }
         epicMap.remove(id);
@@ -110,6 +117,7 @@ public class TaskManager {
         subTaskMap.clear();
         for (Epic oneEpic : epicMap.values()) {
             oneEpic.removeSubTasks();
+            oneEpic.updateStatus(getAllSubTasksInEpic(oneEpic));
         }
     }
 
@@ -125,7 +133,8 @@ public class TaskManager {
 
     public void updateSubTask(SubTask subTask) {
         subTaskMap.put(subTask.getId(), subTask);
-        epicMap.get(subTask.getEpicId()).updateStatus();
+        Epic oneEpic = epicMap.get(subTask.getEpicId());
+        oneEpic.updateStatus(getAllSubTasksInEpic(oneEpic));
     }
 
     public void updateEpic(Epic epic) {

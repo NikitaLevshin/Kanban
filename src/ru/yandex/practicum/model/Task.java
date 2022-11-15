@@ -4,7 +4,7 @@ public class Task {
 
     protected String name;
     protected String description;
-    protected int id;
+    protected Integer id;
     protected TaskStatus status;
 
 
@@ -16,7 +16,7 @@ public class Task {
         this.status = TaskStatus.NEW;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
