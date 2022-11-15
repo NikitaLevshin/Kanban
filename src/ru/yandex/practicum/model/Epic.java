@@ -1,14 +1,11 @@
 package ru.yandex.practicum.model;
 
-import ru.yandex.practicum.manager.TaskManager;
-
 import java.util.ArrayList;
 
 public class Epic extends Task{
 
     private final ArrayList<Integer> subTasks = new ArrayList<>();
 
-    private TaskStatus status;
 
     public Epic(String name, String description) {
         super(name, description);
@@ -17,29 +14,6 @@ public class Epic extends Task{
 
     public void addSubTask(SubTask subTask) {
         subTasks.add(subTask.getId());
-    }
-
-    public void updateStatus(ArrayList<SubTask> subTask) {
-        int countNew = 0;
-        int countDone = 0;
-        for (int i = 0; i < subTask.size(); i++) {
-            SubTask oneSubTask = subTask.get(i);
-                switch (oneSubTask.getStatus()) {
-                    case NEW:
-                        countNew++;
-                        break;
-                    case DONE:
-                        countDone++;
-                        break;
-                }
-        }
-            if (countNew == subTasks.size()) {
-                status = TaskStatus.NEW;
-            } else if (countDone == subTasks.size()) {
-                status = TaskStatus.DONE;
-            } else {
-                status = TaskStatus.IN_PROGRESS;
-            }
     }
 
     public ArrayList<Integer> getSubTasks() {

@@ -3,6 +3,7 @@ package ru.yandex.practicum.manager;
 import ru.yandex.practicum.model.Epic;
 import ru.yandex.practicum.model.SubTask;
 import ru.yandex.practicum.model.Task;
+import ru.yandex.practicum.model.TaskStatus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +37,7 @@ public class TaskManager {
     public void addSubTaskToEpic(Epic epic, SubTask subTask) {
         if (epic.getId() == subTask.getEpicId()) {
             epic.addSubTask(subTask);
+            updateEpicStatus(epic);
         }
     }
 
@@ -82,8 +84,8 @@ public class TaskManager {
     public ArrayList<SubTask> getAllSubTasksInEpic(Epic epic) {
         ArrayList<Integer> ids = new ArrayList<>(epic.getSubTasks());
         ArrayList<SubTask> result = new ArrayList<>();
-        for (int i = 0; i < ids.size(); i++) {
-            result.add(subTaskMap.get(ids.get(i)));
+        for (Integer id : ids) {
+            result.add(subTaskMap.get(id));
         }
         return result;
     }
@@ -97,7 +99,7 @@ public class TaskManager {
         Epic oneEpic = getEpicById(subTaskMap.get(id).getEpicId());
         oneEpic.removeOneSubTask(subTaskMap.get(id));
         subTaskMap.remove(id);
-        oneEpic.updateStatus(getAllSubTasksInEpic(oneEpic));
+        updateEpicStatus(oneEpic);
     }
 
     public void removeEpicById(int id) {
@@ -117,7 +119,7 @@ public class TaskManager {
         subTaskMap.clear();
         for (Epic oneEpic : epicMap.values()) {
             oneEpic.removeSubTasks();
-            oneEpic.updateStatus(getAllSubTasksInEpic(oneEpic));
+            updateEpicStatus(oneEpic);
         }
     }
 
@@ -134,10 +136,38 @@ public class TaskManager {
     public void updateSubTask(SubTask subTask) {
         subTaskMap.put(subTask.getId(), subTask);
         Epic oneEpic = epicMap.get(subTask.getEpicId());
-        oneEpic.updateStatus(getAllSubTasksInEpic(oneEpic));
+        updateEpicStatus(oneEpic);
     }
 
     public void updateEpic(Epic epic) {
+        updateEpicStatus(epic);
         epicMap.put(epic.getId(), epic);
+    }
+
+    public void updateEpicStatus(Epic epic) {
+        int countNew = 0;
+        int countDone = 0;
+
+        for (Integer id : epic.getSubTasks()) {
+            SubTask oneSubTask = subTaskMap.get(id);
+            if (oneSubTask != null) {
+                switch (oneSubTask.getStatus()) {
+                    case NEW:
+                        countNew++;
+                        break;
+                    case DONE:
+                        countDone++;
+                        break;
+                    }
+                }
+            }
+
+        if (countNew == epic.getSubTasks().size()) {
+            epic.setStatus(TaskStatus.NEW);
+        } else if (countDone == epic.getSubTasks().size()) {
+            epic.setStatus(TaskStatus.DONE);
+        } else {
+            epic.setStatus(TaskStatus.IN_PROGRESS);
+        }
     }
 }
