@@ -20,7 +20,7 @@ public class SubTask extends Task {
 
     @Override
     public String toString() {
-        return "ru.yandex.practicum.model.SubTask{" +
+        return "SubTask{" +
                 "epicId=" + epicId +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +

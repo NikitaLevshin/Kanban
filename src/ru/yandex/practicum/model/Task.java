@@ -50,7 +50,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return "ru.yandex.practicum.model.Task{" +
+        return "Task{" +
                 "name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", id=" + id +

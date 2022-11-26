@@ -1,5 +1,6 @@
 package ru.yandex.practicum;
 
+import ru.yandex.practicum.manager.InMemoryTaskManager;
 import ru.yandex.practicum.manager.TaskManager;
 import ru.yandex.practicum.model.Epic;
 import ru.yandex.practicum.model.SubTask;
@@ -11,7 +12,7 @@ public class Main {
         //Тестирование
         //Создаем объекты задач, подзадач, и эпиков
 
-        TaskManager taskManager = new TaskManager();
+        TaskManager taskManager = new InMemoryTaskManager();
         Task movement = new Task("Переезд", "Переезжаем в новую квартиру");
         int movementID = taskManager.newTask(movement);
         Task cleaning = new Task ("Уборка", "Убираем квартиру");
@@ -29,21 +30,27 @@ public class Main {
 
         //Выводим списки
         System.out.println(taskManager.getAllTasks());
+        System.out.println(taskManager.getHistoryManager().getHistory());
         System.out.println(taskManager.getAllSubTasks());
+        System.out.println(taskManager.getHistoryManager().getHistory());
         System.out.println(taskManager.getAllEpics());
+        System.out.println(taskManager.getHistoryManager().getHistory());
         System.out.println(taskManager.getAllSubTasksInEpic(vacation));
 
         //Удаляем сабтаск по айди
         taskManager.removeSubTaskById(collectionID);
         System.out.println(taskManager.getAllEpics());
+        System.out.println(taskManager.getHistoryManager().getHistory());
 
         //Проверяем изменение статусов у эпиков
         tourBuy.setStatus(TaskStatus.IN_PROGRESS);
         taskManager.updateSubTask(tourBuy);
         System.out.println(taskManager.getAllEpics());
+        System.out.println(taskManager.getHistoryManager().getHistory());
 
         taskManager.removeEpicById(vacationID);
         System.out.println(taskManager.getAllEpics());
+        System.out.println(taskManager.getHistoryManager().getHistory());
 
         shopping.setStatus(TaskStatus.DONE);
         taskManager.updateEpic(shopping);
@@ -57,5 +64,8 @@ public class Main {
         taskManager.removeSubTasks();
         System.out.println(taskManager.getAllSubTasks());
         System.out.println(taskManager.getAllEpics());
+        System.out.println(taskManager.getAllTasks());
+
+        System.out.println(taskManager.getHistoryManager().getHistory());
     }
 }
