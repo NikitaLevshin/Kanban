@@ -12,7 +12,7 @@ public class Main {
         //Тестирование
         //Создаем объекты задач, подзадач, и эпиков
 
-        TaskManager taskManager = new InMemoryTaskManager();
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
         Task movement = new Task("Переезд", "Переезжаем в новую квартиру");
         int movementID = taskManager.newTask(movement);
         Task cleaning = new Task ("Уборка", "Убираем квартиру");
@@ -28,44 +28,20 @@ public class Main {
         SubTask clothes = new SubTask("Поездка в ТЦ", "Покупаем вещи в ТЦ", shopping.getId());
         int clothesID = taskManager.newSubTask(clothes);
 
-        //Выводим списки
-        System.out.println(taskManager.getAllTasks());
-        System.out.println(taskManager.getHistoryManager().getHistory());
-        System.out.println(taskManager.getAllSubTasks());
-        System.out.println(taskManager.getHistoryManager().getHistory());
-        System.out.println(taskManager.getAllEpics());
-        System.out.println(taskManager.getHistoryManager().getHistory());
-        System.out.println(taskManager.getAllSubTasksInEpic(vacation));
+        //Выводим таски и историю
+        taskManager.getTaskById(1);
+        taskManager.getTaskById(2);
+        System.out.println(taskManager.historyManager.getHistory());
 
-        //Удаляем сабтаск по айди
-        taskManager.removeSubTaskById(collectionID);
-        System.out.println(taskManager.getAllEpics());
-        System.out.println(taskManager.getHistoryManager().getHistory());
+        taskManager.getSubTaskById(5);
+        taskManager.getSubTaskById(6);
+        System.out.println(taskManager.historyManager.getHistory());
 
-        //Проверяем изменение статусов у эпиков
-        tourBuy.setStatus(TaskStatus.IN_PROGRESS);
-        taskManager.updateSubTask(tourBuy);
-        System.out.println(taskManager.getAllEpics());
-        System.out.println(taskManager.getHistoryManager().getHistory());
+        taskManager.removeSubTaskById(5);
+        System.out.println(taskManager.historyManager.getHistory());
 
-        taskManager.removeEpicById(vacationID);
-        System.out.println(taskManager.getAllEpics());
-        System.out.println(taskManager.getHistoryManager().getHistory());
+        taskManager.getEpicById(4);
+        System.out.println(taskManager.historyManager.getHistory());
 
-        shopping.setStatus(TaskStatus.DONE);
-        taskManager.updateEpic(shopping);
-        System.out.println(shopping);
-
-        clothes.setStatus(TaskStatus.DONE);
-        taskManager.updateSubTask(clothes);
-        System.out.println(shopping);
-
-        //Удаляем все сабтаски
-        taskManager.removeSubTasks();
-        System.out.println(taskManager.getAllSubTasks());
-        System.out.println(taskManager.getAllEpics());
-        System.out.println(taskManager.getAllTasks());
-
-        System.out.println(taskManager.getHistoryManager().getHistory());
     }
 }

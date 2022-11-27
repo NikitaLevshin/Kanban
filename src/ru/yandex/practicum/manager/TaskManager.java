@@ -16,8 +16,6 @@ public interface TaskManager {
 
     int newEpic(Epic epic);
 
-    void addSubTaskToEpic(Epic epic, SubTask subTask);
-
     //получаем задачи по её идентификатору
     Task getTaskById(int id);
 
@@ -54,9 +52,5 @@ public interface TaskManager {
     void updateSubTask(SubTask subTask);
 
     void updateEpic(Epic epic);
-
-    void updateEpicStatus(Epic epic);
-
-    HistoryManager getHistoryManager();
 
 }
