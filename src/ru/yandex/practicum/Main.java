@@ -25,23 +25,31 @@ public class Main {
         int tourBuyID = taskManager.newSubTask(tourBuy);
         SubTask collection = new SubTask("Сбор вещей", "Собираем чемоданы", vacation.getId());
         int collectionID = taskManager.newSubTask(collection);
-        SubTask clothes = new SubTask("Поездка в ТЦ", "Покупаем вещи в ТЦ", shopping.getId());
+        SubTask clothes = new SubTask("Поездка в ТЦ", "Покупаем вещи в ТЦ", vacation.getId());
         int clothesID = taskManager.newSubTask(clothes);
 
-        //Выводим таски и историю
+        taskManager.getEpicById(4);
+        taskManager.getEpicById(3);
+        taskManager.getTaskById(2);
         taskManager.getTaskById(1);
+        System.out.println(taskManager.historyManager.getHistory());
+
+        taskManager.getEpicById(3);
+        taskManager.getEpicById(4);
+        taskManager.getEpicById(1);
         taskManager.getTaskById(2);
         System.out.println(taskManager.historyManager.getHistory());
 
-        taskManager.getSubTaskById(5);
-        taskManager.getSubTaskById(6);
-        System.out.println(taskManager.historyManager.getHistory());
-
-        taskManager.removeSubTaskById(5);
-        System.out.println(taskManager.historyManager.getHistory());
-
+        taskManager.getTaskById(2);
         taskManager.getEpicById(4);
+        taskManager.getTaskById(1);
+        taskManager.getEpicById(3);
         System.out.println(taskManager.historyManager.getHistory());
 
+        taskManager.removeTaskById(2);
+        System.out.println(taskManager.historyManager.getHistory());
+
+        taskManager.removeEpicById(3);
+        System.out.println(taskManager.historyManager.getHistory());
     }
 }

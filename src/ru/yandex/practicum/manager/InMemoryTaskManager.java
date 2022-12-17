@@ -59,7 +59,7 @@ public class InMemoryTaskManager implements TaskManager {
     //получаем задачи по её идентификатору
     public Task getTaskById(int id) {
         if (taskMap.get(id) != null) {
-            historyManager.add(taskMap.get(id).getId());
+            historyManager.add(taskMap.get(id));
             return taskMap.get(id);
         } return null;
     }
@@ -67,7 +67,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public SubTask getSubTaskById(int id) {
         if (subTaskMap.get(id) != null) {
-            historyManager.add(subTaskMap.get(id).getId());
+            historyManager.add(subTaskMap.get(id));
             return subTaskMap.get(id);
         } return null;
     }
@@ -75,7 +75,8 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Epic getEpicById(int id) {
         if (epicMap.get(id) != null) {
-            historyManager.add(epicMap.get(id).getId());
+            historyManager.add(epicMap.get(id));
+            getAllSubTasksInEpic(id);
             return epicMap.get(id);
         } return null;
     }
@@ -101,10 +102,12 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<SubTask> getAllSubTasksInEpic(Epic epic) {
+    public ArrayList<SubTask> getAllSubTasksInEpic(int epicId) {
         ArrayList<SubTask> result = new ArrayList<>();
-        for (Integer ids : epic.getSubTasks()) {
+        Epic oneEpic = epicMap.get(epicId);
+        for (Integer ids : oneEpic.getSubTasks()) {
             result.add(subTaskMap.get(ids));
+            historyManager.add(subTaskMap.get(ids));
         }
         return result;
     }
@@ -112,6 +115,7 @@ public class InMemoryTaskManager implements TaskManager {
     //удаляем задачи по идентификатору
     @Override
     public void removeTaskById(int id) {
+        historyManager.remove(id);
         taskMap.remove(id);
     }
 
@@ -119,6 +123,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeSubTaskById(int id) {
         Epic oneEpic = epicMap.get((subTaskMap.get(id).getEpicId()));
         oneEpic.removeOneSubTask(subTaskMap.get(id));
+        historyManager.remove(id);
         subTaskMap.remove(id);
         updateEpicStatus(oneEpic);
     }
@@ -127,8 +132,10 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeEpicById(int id) {
         Epic oneEpic = epicMap.get(id);
         for (Integer ids : oneEpic.getSubTasks()) {
+            historyManager.remove(ids);
             subTaskMap.remove(ids);
         }
+        historyManager.remove(id);
         epicMap.remove(id);
     }
 

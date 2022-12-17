@@ -30,7 +30,7 @@ public interface TaskManager {
 
     ArrayList<Epic> getAllEpics();
 
-    ArrayList<SubTask> getAllSubTasksInEpic(Epic epic);
+    ArrayList<SubTask> getAllSubTasksInEpic(int epicId);
 
     //удаляем задачи по идентификатору
     void removeTaskById(int id);
