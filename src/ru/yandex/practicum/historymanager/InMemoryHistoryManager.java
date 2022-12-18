@@ -3,17 +3,14 @@ package ru.yandex.practicum.historymanager;
 import ru.yandex.practicum.model.Task;
 import ru.yandex.practicum.model.TaskNode;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private List<Integer> tasks = new ArrayList<>();
     private HashMap<Integer, TaskNode> tasksMap = new LinkedHashMap<>();
     private TaskNode<Task> historyHead;
     private TaskNode<Task> historyTail;
+    private int historySize = 0;
 
     public InMemoryHistoryManager() {
         historyHead = null;
@@ -22,19 +19,22 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public List<Integer> getHistory() {
-        getTasks();
+        List<Integer> tasks = new ArrayList<>();
+        TaskNode<Task> task = historyHead;
+        for (int i = 0; i < historySize; i++) {
+            tasks.add(task.data.getId());
+            task = task.next;
+        }
         return tasks;
     }
 
     @Override
     public void add(Task task) {
-        if (tasks.size() >= 10) {
-            tasks.remove(0);
-        }
         if (tasksMap.containsKey(task.getId())) {
             remove(task.getId());
         }
         tasksMap.put(task.getId(), linkLast(task));
+        historySize++;
     }
 
     @Override
@@ -55,23 +55,18 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
         return lastTask;
     }
-    public void getTasks() {
-        tasks.clear();
-        for (int id: tasksMap.keySet()) {
-            tasks.add(id);
-        }
-    }
-    public void removeNode(TaskNode<Task> Node) {
-        if (Node == historyHead) {
-            Node.getNext().setPrev(null);
-            historyHead = Node.getNext();
-        } else if (Node == historyTail) {
-            Node.getPrev().setNext(null);
-            historyTail = Node.getPrev();
+    public void removeNode(TaskNode<Task> node) {
+        if (node == historyHead) {
+            node.getNext().setPrev(null);
+            historyHead = node.getNext();
+        } else if (node == historyTail) {
+            node.getPrev().setNext(null);
+            historyTail = node.getPrev();
         } else {
-            Node.getPrev().setNext(Node.getNext());
-            Node.getNext().setPrev(Node.getPrev());
+            node.getPrev().setNext(node.getNext());
+            node.getNext().setPrev(node.getPrev());
         }
-        tasksMap.remove(Node.getData().getId());
+        tasksMap.remove(node.getData().getId());
+        historySize--;
     }
 }
