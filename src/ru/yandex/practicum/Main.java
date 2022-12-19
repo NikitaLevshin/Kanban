@@ -54,5 +54,12 @@ public class Main {
 
         taskManager.removeEpicById(3);
         System.out.println(taskManager.historyManager.getHistory());
+
+        taskManager.getTaskById(1);
+        taskManager.removeTaskById(1);
+        System.out.println(taskManager.historyManager.getHistory());
+
+        taskManager.removeTaskById(4);
+        System.out.println(taskManager.historyManager.getHistory());
     }
 }
