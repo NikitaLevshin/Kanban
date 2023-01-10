@@ -6,14 +6,24 @@ public class Task {
     protected String description;
     protected Integer id;
     protected TaskStatus status;
+    protected TaskType type;
 
 
 
 
-    public Task(String name, String description) {
+    public Task(String name, String description, TaskType type) {
         this.name = name;
         this.description = description;
         this.status = TaskStatus.NEW;
+        this.type = type;
+    }
+
+    public Task(Integer id, TaskType type, String name, TaskStatus status, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.status = status;
+        this.type = type;
     }
 
     public Integer getId() {
@@ -50,11 +60,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", id=" + id +
-                ", status='" + status + '\'' +
-                '}';
+        return String.format("%d,%s,%s,%s,%s,", this.id, this.type, this.name, this.status, this.description);
     }
 }
