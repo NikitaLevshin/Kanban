@@ -8,7 +8,7 @@ import java.io.File;
 public class Managers {
 
     public static TaskManager getDefault() {
-        return FileBackedTaskManager.loadFromFile(new File("resources/tasks.csv"));
+        return new FileBackedTaskManager();
     }
 
     public static HistoryManager getDefaultHistory() {

@@ -11,7 +11,7 @@ public class Main {
         //Тестирование
         //Создаем объекты задач, подзадач, и эпиков
 
-        TaskManager taskManager = new InMemoryTaskManager();
+        TaskManager taskManager = Managers.getDefault();
         Task movement = new Task("Переезд", "Переезжаем в новую квартиру", TaskType.TASK);
         int movementID = taskManager.newTask(movement);
         Task cleaning = new Task ("Уборка", "Убираем квартиру", TaskType.TASK);
