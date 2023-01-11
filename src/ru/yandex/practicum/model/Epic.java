@@ -11,8 +11,9 @@ public class Epic extends Task{
         super(name, description, type);
         status = TaskStatus.NEW;
     }
-    public Epic (Integer id, TaskType type, String name, TaskStatus status, String description) {
-        super(id, type, name, status, description);
+    public Epic (Integer id, String name, TaskStatus status, String description) {
+        super(id, name, status, description);
+        type = TaskType.EPIC;
     }
 
     public void addSubTask(SubTask subTask) {
@@ -31,9 +32,19 @@ public class Epic extends Task{
         subTasks.remove(subTask.getId());
     }
 
+    public String toCsv() {
+        return String.format("%d,%s,%s,%s,%s,", this.id, this.type, this.name, this.status, this.description);
+    }
 
     @Override
     public String toString() {
-        return String.format("%d,%s,%s,%s,%s,", this.id, this.type, this.name, this.status, this.description);
+        return "Epic{" +
+                "subTasks=" + subTasks +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", id=" + id +
+                ", status=" + status +
+                ", type=" + type +
+                '}';
     }
 }

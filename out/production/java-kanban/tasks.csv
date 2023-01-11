@@ -7,4 +7,4 @@ id,type,name,status,description,epic
 6,SUBTASK,Сбор вещей,NEW,Собираем чемоданы,3,
 7,SUBTASK,Поездка в ТЦ,NEW,Покупаем вещи в ТЦ,3,
 
-2,4,1,3,5,6,7,
+2,4,3,5,6,7,1

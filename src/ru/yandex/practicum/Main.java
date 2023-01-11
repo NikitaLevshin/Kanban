@@ -2,6 +2,7 @@ package ru.yandex.practicum;
 
 import ru.yandex.practicum.manager.FileBackedTaskManager;
 import ru.yandex.practicum.manager.InMemoryTaskManager;
+import ru.yandex.practicum.manager.Managers;
 import ru.yandex.practicum.manager.TaskManager;
 import ru.yandex.practicum.model.*;
 
@@ -10,7 +11,7 @@ public class Main {
         //Тестирование
         //Создаем объекты задач, подзадач, и эпиков
 
-/*        FileBackedTaskManager taskManager = new FileBackedTaskManager();
+        TaskManager taskManager = new InMemoryTaskManager();
         Task movement = new Task("Переезд", "Переезжаем в новую квартиру", TaskType.TASK);
         int movementID = taskManager.newTask(movement);
         Task cleaning = new Task ("Уборка", "Убираем квартиру", TaskType.TASK);
@@ -39,7 +40,7 @@ public class Main {
         taskManager.getTaskById(2);
         taskManager.getEpicById(4);
         taskManager.getTaskById(1);
-        taskManager.getEpicById(3);*/
+        taskManager.getEpicById(3);
 
     }
 }

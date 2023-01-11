@@ -18,12 +18,12 @@ public class Task {
         this.type = type;
     }
 
-    public Task(Integer id, TaskType type, String name, TaskStatus status, String description) {
+    public Task(Integer id, String name, TaskStatus status, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.status = status;
-        this.type = type;
+        type = TaskType.TASK;
     }
 
     public Integer getId() {
@@ -32,6 +32,9 @@ public class Task {
 
     public String getName() {
         return name;
+    }
+    public TaskType getType() {
+        return type;
     }
 
     public void setName(String name) {
@@ -58,8 +61,18 @@ public class Task {
         this.status = status;
     }
 
+    public String toCsv() {
+        return String.format("%d,%s,%s,%s,%s,", this.id, this.type, this.name, this.status, this.description);
+    }
+
     @Override
     public String toString() {
-        return String.format("%d,%s,%s,%s,%s,", this.id, this.type, this.name, this.status, this.description);
+        return "Task{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", id=" + id +
+                ", status=" + status +
+                ", type=" + type +
+                '}';
     }
 }
