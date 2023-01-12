@@ -15,10 +15,10 @@ import java.util.StringJoiner;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
-    final static String PATH = "resources/tasks.csv";
+    final static File file = new File("resources/tasks.csv");
 
     public void save() {
-        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(Path.of(PATH), StandardOpenOption.TRUNCATE_EXISTING)) {
+        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(Path.of(file.getPath()), StandardOpenOption.TRUNCATE_EXISTING)) {
             bufferedWriter.write("id,type,name,status,description,epic\n");
             if (!taskMap.isEmpty()) {
                 for (Map.Entry<Integer, Task> entry : taskMap.entrySet()) {
@@ -80,11 +80,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                                     taskManager.newEpic((Epic) task);
                                     break;
                                 default:
+                                    throw new IllegalArgumentException("Считано не задание");
                             }
                         }
                     }
                 }
                 return taskManager;
+                //id заново генерируются в строках 74, 77, 80
             } catch (IOException e) {
                 throw new ManagerSaveException(e.getMessage());
             }
@@ -122,9 +124,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 int epicId = Integer.parseInt(values[5]);
                 return new SubTask(id, name, status, description, epicId);
             default:
-
+                throw new IllegalArgumentException("Такого типа заданий не существует");
         }
-        return null;
     }
 
     public static List <Integer> historyFromString(String value) {
@@ -237,7 +238,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
 
     public static void main(String[] args) {
-        FileBackedTaskManager taskManager = FileBackedTaskManager.loadFromFile(new File(PATH));
+        FileBackedTaskManager taskManager = FileBackedTaskManager.loadFromFile(file);
         System.out.println(taskManager.historyManager.getHistory());
         System.out.println(taskManager.getAllTasks());
         System.out.println(taskManager.getAllSubTasks());

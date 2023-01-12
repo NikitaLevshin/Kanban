@@ -12,19 +12,19 @@ public class Main {
         //Создаем объекты задач, подзадач, и эпиков
 
         TaskManager taskManager = Managers.getDefault();
-        Task movement = new Task("Переезд", "Переезжаем в новую квартиру", TaskType.TASK);
+        Task movement = new Task("Переезд", "Переезжаем в новую квартиру");
         int movementID = taskManager.newTask(movement);
-        Task cleaning = new Task ("Уборка", "Убираем квартиру", TaskType.TASK);
+        Task cleaning = new Task ("Уборка", "Убираем квартиру");
         int cleaningID = taskManager.newTask(cleaning);
-        Epic vacation = new Epic("Отдых заграницей", "Планирование отдыха", TaskType.EPIC);
+        Epic vacation = new Epic("Отдых заграницей", "Планирование отдыха");
         int vacationID = taskManager.newEpic(vacation);
-        Epic shopping = new Epic("Покупка вещей", "Вещи для отдыха", TaskType.EPIC);
+        Epic shopping = new Epic("Покупка вещей", "Вещи для отдыха");
         int shoppingID = taskManager.newEpic(shopping);
-        SubTask tourBuy = new SubTask("Покупка путевки", "Выбор отеля", vacation.getId(), TaskType.SUBTASK);
+        SubTask tourBuy = new SubTask("Покупка путевки", "Выбор отеля", vacation.getId());
         int tourBuyID = taskManager.newSubTask(tourBuy);
-        SubTask collection = new SubTask("Сбор вещей", "Собираем чемоданы", vacation.getId(), TaskType.SUBTASK);
+        SubTask collection = new SubTask("Сбор вещей", "Собираем чемоданы", vacation.getId());
         int collectionID = taskManager.newSubTask(collection);
-        SubTask clothes = new SubTask("Поездка в ТЦ", "Покупаем вещи в ТЦ", vacation.getId(), TaskType.SUBTASK);
+        SubTask clothes = new SubTask("Поездка в ТЦ", "Покупаем вещи в ТЦ", vacation.getId());
         int clothesID = taskManager.newSubTask(clothes);
 
         taskManager.getEpicById(4);

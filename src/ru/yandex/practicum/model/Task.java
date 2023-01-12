@@ -11,11 +11,11 @@ public class Task {
 
 
 
-    public Task(String name, String description, TaskType type) {
+    public Task(String name, String description) {
         this.name = name;
         this.description = description;
         this.status = TaskStatus.NEW;
-        this.type = type;
+        type = TaskType.TASK;
     }
 
     public Task(Integer id, String name, TaskStatus status, String description) {
