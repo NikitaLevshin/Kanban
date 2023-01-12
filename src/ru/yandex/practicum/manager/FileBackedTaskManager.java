@@ -15,7 +15,11 @@ import java.util.StringJoiner;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
-    final static File file = new File("resources/tasks.csv");
+    private final File file;
+
+    public FileBackedTaskManager(File file) {
+        this.file = file;
+    }
 
     public void save() {
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(Path.of(file.getPath()), StandardOpenOption.TRUNCATE_EXISTING)) {
@@ -51,9 +55,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     public static FileBackedTaskManager loadFromFile(File file) {
+        FileBackedTaskManager taskManager = new FileBackedTaskManager(file);
         if (file.exists()) {
             try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-                FileBackedTaskManager taskManager = new FileBackedTaskManager();
                 while (br.ready()) {
                     String line = br.readLine();
                     if (line.startsWith("id")) {
@@ -86,7 +90,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     }
                 }
                 return taskManager;
-                //id заново генерируются в строках 74, 77, 80
             } catch (IOException e) {
                 throw new ManagerSaveException(e.getMessage());
             }
@@ -238,7 +241,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
 
     public static void main(String[] args) {
-        FileBackedTaskManager taskManager = FileBackedTaskManager.loadFromFile(file);
+        FileBackedTaskManager taskManager = loadFromFile(new File("resources/tasks.csv"));
         System.out.println(taskManager.historyManager.getHistory());
         System.out.println(taskManager.getAllTasks());
         System.out.println(taskManager.getAllSubTasks());

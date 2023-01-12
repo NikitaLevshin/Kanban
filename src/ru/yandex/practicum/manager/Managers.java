@@ -5,12 +5,11 @@ import ru.yandex.practicum.historymanager.InMemoryHistoryManager;
 
 import java.io.File;
 
-import static ru.yandex.practicum.manager.FileBackedTaskManager.file;
-
 public class Managers {
+    final static File TASK_FILE = new File("resources/tasks.csv");
 
     public static TaskManager getDefault() {
-        return FileBackedTaskManager.loadFromFile(file);
+        return FileBackedTaskManager.loadFromFile(TASK_FILE);
     }
 
     public static HistoryManager getDefaultHistory() {
