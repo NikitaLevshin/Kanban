@@ -1,5 +1,6 @@
 package ru.yandex.practicum.model;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Epic extends Task{
@@ -12,9 +13,10 @@ public class Epic extends Task{
         status = TaskStatus.NEW;
         type = TaskType.EPIC;
     }
-    public Epic (Integer id, String name, TaskStatus status, String description) {
-        super(id, name, status, description);
+    public Epic (Integer id, String name, String description) {
+        super(id, name, description);
         type = TaskType.EPIC;
+        status = TaskStatus.NEW;
     }
 
     public void addSubTask(SubTask subTask) {
@@ -34,7 +36,11 @@ public class Epic extends Task{
     }
 
     public String toCsv() {
-        return String.format("%d,%s,%s,%s,%s,", this.id, this.type, this.name, this.status, this.description);
+        return String.format("%d,%s,%s,%s,%s,%s,%s", this.id, this.type, this.name, this.status, this.description, this.startTime, this.duration);
+    }
+
+    public void setEndTime(LocalDateTime time) {
+        if (endTime == null || !time.isBefore(endTime)) this.endTime = time;
     }
 
     @Override

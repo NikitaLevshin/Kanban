@@ -8,10 +8,8 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
@@ -23,7 +21,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     public void save() {
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(Path.of(file.getPath()), StandardOpenOption.TRUNCATE_EXISTING)) {
-            bufferedWriter.write("id,type,name,status,description,epic\n");
+            bufferedWriter.write("id,type,name,status,description,startTime,duration,epic\n");
             if (!taskMap.isEmpty()) {
                 for (Map.Entry<Integer, Task> entry : taskMap.entrySet()) {
                     bufferedWriter.write(entry.getValue().toCsv());
@@ -94,7 +92,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 throw new ManagerSaveException(e.getMessage());
             }
         }
-        return null;
+        return taskManager;
     }
 
     public static String historyToString(HistoryManager manager) {
@@ -115,17 +113,25 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String name = values[2];
         TaskStatus status = TaskStatus.valueOf(values[3]);
         String description = values[4];
-
+        LocalDateTime startTime = null;
+        Long duration = null;
+        if (!values[5].equals("null") && !values[6].equals("null")) {
+            startTime = LocalDateTime.parse(values[5]);
+            duration = Long.parseLong(values[6]);
+        }
         switch (type) {
             case TASK:
-                return new Task(id, name, status, description);
+                if (values[6].equals("null")) return new Task(id, name, status, description);
+                else return new Task(id, name, status, description, startTime, duration);
+
 
             case EPIC:
-                return new Epic(id, name, status, description);
+                return new Epic(id, name, description);
 
             case SUBTASK:
-                int epicId = Integer.parseInt(values[5]);
-                return new SubTask(id, name, status, description, epicId);
+                    int epicId = Integer.parseInt(values[7]);
+                    if (values[6].equals("null")) return new SubTask(id, name, status, description, epicId);
+                    return new SubTask(id, name, status, description, startTime, duration, epicId);
             default:
                 throw new IllegalArgumentException("Такого типа заданий не существует");
         }
@@ -237,7 +243,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         save();
     }
 
+    @Override
+    public void epicTime(Epic epic) {
+        super.epicTime(epic);
+        save();
+    }
 
+    @Override
+    public void epicDuration(Epic epic) {
+        super.epicDuration(epic);
+        save();
+    }
 
 
     public static void main(String[] args) {

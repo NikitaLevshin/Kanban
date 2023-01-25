@@ -1,15 +1,19 @@
 package ru.yandex.practicum.manager;
 
 import ru.yandex.practicum.historymanager.HistoryManager;
-import ru.yandex.practicum.historymanager.InMemoryHistoryManager;
 import ru.yandex.practicum.model.Epic;
 import ru.yandex.practicum.model.SubTask;
 import ru.yandex.practicum.model.Task;
 import ru.yandex.practicum.model.TaskStatus;
 
+import java.time.DateTimeException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.function.Predicate;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -18,35 +22,60 @@ public class InMemoryTaskManager implements TaskManager {
     protected HashMap<Integer, Task> taskMap = new HashMap<>();
     protected HashMap<Integer, SubTask> subTaskMap = new HashMap<>();
     protected HashMap<Integer, Epic> epicMap = new HashMap<>();
+    protected Set<Task> prioritizedTasks = new TreeSet<>((o1, o2) -> {
+        if (o1.getStartTime() == null) return 1;
+        if (o2.getStartTime() == null) return -1;
+        if (o1.getStartTime() == null && o2.getStartTime() == null) return 0;
+        else return o1.getStartTime().compareTo(o2.getStartTime());
+    });
+
 
 
 
     @Override
     public int newTask(Task task) {
-        task.setId(newId());
-        taskMap.put(task.getId(), task);
+        if (validator.test(task)) {
+            task.setId(newId());
+            taskMap.put(task.getId(), task);
+            prioritizedTasks.add(task);
+        } else {
+            throw new DateTimeException("Время старта и конца заданий не должны пересекаться");
+        }
         return task.getId();
     }
 
     @Override
     public int newSubTask(SubTask subTask) {
-        subTask.setId(newId());
-        subTaskMap.put(subTask.getId(), subTask);
-        addSubTaskToEpic(epicMap.get(subTask.getEpicId()), subTask);
+        if (validator.test(subTask)) {
+            subTask.setId(newId());
+            subTaskMap.put(subTask.getId(), subTask);
+            prioritizedTasks.add(subTask);
+            addSubTaskToEpic(epicMap.get(subTask.getEpicId()), subTask);
+        } else {
+            throw new DateTimeException("Время старта и конца заданий не должны пересекаться");
+        }
         return subTask.getId();
     }
 
     @Override
     public int newEpic(Epic epic) {
-        epic.setId(newId());
-        epicMap.put(epic.getId(), epic);
+        if (validator.test(epic)) {
+            epic.setId(newId());
+            epicMap.put(epic.getId(), epic);
+            prioritizedTasks.add(epic);
+        } else {
+            throw new DateTimeException("Время старта и конца заданий не должны пересекаться");
+        }
         return epic.getId();
     }
 
     public void addSubTaskToEpic(Epic epic, SubTask subTask) {
         if (epic.getId() == subTask.getEpicId()) {
             epic.addSubTask(subTask);
+            epicTime(epicMap.get(subTask.getEpicId()));
+            epicDuration(epicMap.get(subTask.getEpicId()));
             updateEpicStatus(epic);
+            prioritizedTasks.add(epicMap.get(subTask.getEpicId()));
         }
     }
 
@@ -112,6 +141,11 @@ public class InMemoryTaskManager implements TaskManager {
         return result;
     }
 
+    @Override
+    public Set<Task> getPrioritizedTasks() {
+        return prioritizedTasks;
+    }
+
     //удаляем задачи по идентификатору
     @Override
     public void removeTaskById(int id) {
@@ -171,12 +205,17 @@ public class InMemoryTaskManager implements TaskManager {
         subTaskMap.put(subTask.getId(), subTask);
         Epic oneEpic = epicMap.get(subTask.getEpicId());
         updateEpicStatus(oneEpic);
+        epicTime(epicMap.get(subTask.getEpicId()));
+        epicDuration(epicMap.get(subTask.getEpicId()));
     }
 
     @Override
     public void updateEpic(Epic epic) {
         updateEpicStatus(epic);
         epicMap.put(epic.getId(), epic);
+        epicTime(epic);
+        epicDuration(epic);
+        prioritizedTasks.add(epic);
     }
 
     public void updateEpicStatus(Epic epic) {
@@ -205,6 +244,44 @@ public class InMemoryTaskManager implements TaskManager {
             epic.setStatus(TaskStatus.IN_PROGRESS);
         }
     }
+
+    @Override
+    public void epicTime(Epic epic) {
+        LocalDateTime startTime = LocalDateTime.MAX;
+        LocalDateTime endTime = LocalDateTime.MIN;
+        for (Integer id : epic.getSubTasks()) {
+            SubTask subTask = subTaskMap.get(id);
+            if (subTask.getStartTime() != null && startTime.isAfter(subTask.getStartTime())) {
+                startTime = subTask.getStartTime();
+            } if (subTask.getEndTime() != null && endTime.isBefore(subTask.getEndTime())) {
+                endTime = subTask.getEndTime();
+            } if (startTime != LocalDateTime.MAX) epic.setStartTime(startTime);
+            if (endTime != LocalDateTime.MIN) epic.setEndTime(endTime);
+        }
+    }
+
+    @Override
+    public void epicDuration(Epic epic) {
+        if (epic.getStartTime() != null && epic.getEndTime() != null) {
+            epic.setDuration(Duration.between(epic.getStartTime(), epic.getEndTime()).toMinutes());
+        }
+    }
+
+    private final Predicate<Task> validator = task -> {
+        if (task.getStartTime() == null || task.getDuration() == null) return true;
+        LocalDateTime taskStartTime = task.getStartTime();
+        LocalDateTime taskEndTime = task.getEndTime();
+        for (Task sortedTask : prioritizedTasks) {
+            if (sortedTask.getStartTime() != null && sortedTask.getEndTime() != null) {
+                LocalDateTime sortedTaskStart = sortedTask.getStartTime();
+                LocalDateTime sortedTaskEnd = sortedTask.getEndTime();
+                if (taskStartTime == sortedTaskStart || taskEndTime == sortedTaskEnd) return false;
+                if (taskStartTime.isAfter(sortedTaskStart) && taskStartTime.isBefore(sortedTaskEnd)) return false;
+                if (taskEndTime.isAfter(sortedTaskStart) && taskEndTime.isBefore(sortedTaskEnd)) return false;
+            }
+        }
+        return true;
+    };
 
     public HistoryManager getHistoryManager() {
         return historyManager;

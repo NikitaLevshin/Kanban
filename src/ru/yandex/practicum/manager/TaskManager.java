@@ -7,6 +7,7 @@ import ru.yandex.practicum.model.Task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public interface TaskManager {
 
@@ -32,6 +33,8 @@ public interface TaskManager {
 
     ArrayList<SubTask> getAllSubTasksInEpic(int epicId);
 
+    public Set<Task> getPrioritizedTasks();
+
     //удаляем задачи по идентификатору
     void removeTaskById(int id);
 
@@ -52,5 +55,8 @@ public interface TaskManager {
     void updateSubTask(SubTask subTask);
 
     void updateEpic(Epic epic);
+
+    void epicTime(Epic epic);
+    void epicDuration(Epic epic);
 
 }

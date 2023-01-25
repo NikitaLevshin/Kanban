@@ -1,5 +1,7 @@
 package ru.yandex.practicum.model;
 
+import java.time.LocalDateTime;
+
 public class SubTask extends Task {
 
     private int epicId;
@@ -16,6 +18,20 @@ public class SubTask extends Task {
         type = TaskType.SUBTASK;
     }
 
+    public SubTask(Integer id, String name, String description, LocalDateTime startTime, Long duration, Integer epicId) {
+        super(id, name, description, startTime, duration);
+        this.epicId = epicId;
+        type = TaskType.SUBTASK;
+        this.status = TaskStatus.NEW;
+    }
+
+    public SubTask(Integer id, String name, TaskStatus status, String description, LocalDateTime startTime, Long duration, Integer epicId) {
+        super(id, name, status, description, startTime, duration);
+        this.epicId = epicId;
+        type = TaskType.SUBTASK;
+        this.status = TaskStatus.NEW;
+    }
+
     public int getEpicId() {
         return epicId;
     }
@@ -25,7 +41,7 @@ public class SubTask extends Task {
     }
 
     public String toCsv() {
-        return String.format("%d,%s,%s,%s,%s,%d,", this.id, this.type, this.name, this.status, this.description, this.getEpicId());
+        return String.format("%d,%s,%s,%s,%s,%s,%s,%d", this.id, this.type, this.name, this.status, this.description, this.startTime, this.duration, this.getEpicId());
     }
 
     @Override
