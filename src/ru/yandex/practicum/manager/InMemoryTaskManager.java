@@ -9,10 +9,7 @@ import ru.yandex.practicum.model.TaskStatus;
 import java.time.DateTimeException;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -22,12 +19,8 @@ public class InMemoryTaskManager implements TaskManager {
     protected HashMap<Integer, Task> taskMap = new HashMap<>();
     protected HashMap<Integer, SubTask> subTaskMap = new HashMap<>();
     protected HashMap<Integer, Epic> epicMap = new HashMap<>();
-    protected Set<Task> prioritizedTasks = new TreeSet<>((o1, o2) -> {
-        if (o1.getStartTime() == null) return 1;
-        if (o2.getStartTime() == null) return -1;
-        if (o1.getStartTime() == null && o2.getStartTime() == null) return 0;
-        else return o1.getStartTime().compareTo(o2.getStartTime());
-    });
+    protected Set<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime,
+        Comparator.nullsLast(Comparator.naturalOrder())));
 
 
 
@@ -35,7 +28,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public int newTask(Task task) {
         if (validator.test(task)) {
-            task.setId(newId());
+            if (task.getId() == null) task.setId(newId());
             taskMap.put(task.getId(), task);
             prioritizedTasks.add(task);
         } else {
@@ -47,7 +40,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public int newSubTask(SubTask subTask) {
         if (validator.test(subTask)) {
-            subTask.setId(newId());
+            if (subTask.getId() == null) subTask.setId(newId());
             subTaskMap.put(subTask.getId(), subTask);
             prioritizedTasks.add(subTask);
             addSubTaskToEpic(epicMap.get(subTask.getEpicId()), subTask);
@@ -60,7 +53,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public int newEpic(Epic epic) {
         if (validator.test(epic)) {
-            epic.setId(newId());
+            if (epic.getId() == null) epic.setId(newId());
             epicMap.put(epic.getId(), epic);
             prioritizedTasks.add(epic);
         } else {

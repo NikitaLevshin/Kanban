@@ -18,6 +18,13 @@ public class SubTask extends Task {
         type = TaskType.SUBTASK;
     }
 
+    public SubTask(String name, String description, LocalDateTime startTime, Long duration, Integer epicId) {
+        super(name, description, startTime, duration);
+        this.epicId = epicId;
+        type = TaskType.SUBTASK;
+        this.status = TaskStatus.NEW;
+    }
+
     public SubTask(Integer id, String name, String description, LocalDateTime startTime, Long duration, Integer epicId) {
         super(id, name, description, startTime, duration);
         this.epicId = epicId;

@@ -48,7 +48,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 bufferedWriter.write(historyToString(historyManager));
             }
         } catch (IOException e) {
-            throw new ManagerSaveException(e.getMessage());
+            throw new ManagerSaveException("Не удалось сохранить/загрузить файл");
         }
     }
 

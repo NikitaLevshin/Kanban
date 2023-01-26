@@ -36,6 +36,15 @@ public class Task {
         this.name = name;
         this.description = description;
     }
+    public Task(String name, String description, LocalDateTime startTime, Long duration) {
+        this.name = name;
+        this.description = description;
+        type = TaskType.TASK;
+        status = TaskStatus.NEW;
+        this.startTime = startTime;
+        this.duration = duration;
+        endTime = startTime.plusMinutes(duration);
+    }
 
     public Task(Integer id, String name, String description, LocalDateTime startTime, Long duration) {
         this.id = id;
