@@ -1,7 +1,6 @@
-package Test;
+package test.manager;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import ru.yandex.practicum.manager.TaskManager;
 import ru.yandex.practicum.model.*;
 

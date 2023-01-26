@@ -1,7 +1,8 @@
-package Test;
+package test.manager;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.exceptions.ManagerSaveException;
 import ru.yandex.practicum.manager.FileBackedTaskManager;
 import ru.yandex.practicum.model.Epic;
 import ru.yandex.practicum.model.SubTask;
@@ -17,32 +18,26 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
     final static File file = new File("resources/testTasks.csv");
 
     @BeforeEach
-    void BeforeEach() {
+    void beforeEach() {
         taskManager = new FileBackedTaskManager(file);
-    }
-
-    void setUp() {
-        task1 = new Task(10, "task", "description", LocalDateTime.of(2023,01,24,15,00), 40L);
-        taskManager.newTask(task1);
+        task1 = new Task("task", "description", LocalDateTime.of(2023,02,24,15,00), 40L);
         task2 = new Task("task2", "description");
-        taskManager.newTask(task2);
         epic1 = new Epic("epic1", "description");
         taskManager.newEpic(epic1);
         epic2 = new Epic("epic2", "description");
         taskManager.newEpic(epic2);
-        subTask1 = new SubTask(11, "SubTask", "description",
-                LocalDateTime.of(2023,01,24,16,00), 45L, 3);
-        taskManager.newSubTask(subTask1);
+        subTask1 = new SubTask("SubTask", "description",
+                LocalDateTime.of(2023,02,24,16,00), 45L, epic1.getId());
         subTask2 = new SubTask("subTask2", "description", epic2.getId());
-        taskManager.newSubTask(subTask2);
         subTask3 = new SubTask("subTask3", "description", epic1.getId());
-        taskManager.newSubTask(subTask3);
     }
 
     @Test
     public void emptySaveTest() {
-        taskManager.save();
-        FileBackedTaskManager loadFromFile = FileBackedTaskManager.loadFromFile(file);
+        File emptyFile = new File("resources/emptyTasks.csv");
+        FileBackedTaskManager testSave = new FileBackedTaskManager(emptyFile);
+        testSave.save();
+        FileBackedTaskManager loadFromFile = FileBackedTaskManager.loadFromFile(emptyFile);
         assertTrue(loadFromFile.getAllTasks().isEmpty(), "Задачи не пусты");
         assertTrue(loadFromFile.getAllSubTasks().isEmpty(), "Сабтаски не пусты");
         assertTrue(loadFromFile.getAllEpics().isEmpty(), "Эпики не пусты");
@@ -50,7 +45,8 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
 
     @Test
     public void saveAndLoadTest() {
-        setUp();
+        taskManager.newTask(task1);
+        taskManager.newSubTask(subTask1);
         FileBackedTaskManager loadFromFile = FileBackedTaskManager.loadFromFile(file);
         assertEquals(task1.getId(), loadFromFile.getTaskById(task1.getId()).getId(), "Некорректная загрузка файла");
         assertEquals(epic1.getId(), loadFromFile.getEpicById(epic1.getId()).getId(), "Некорректная загрузка файла");
@@ -59,8 +55,9 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
 
     @Test
     public void saveAndLoadHistoryTest() {
-        setUp();
+        taskManager.newTask(task1);
         taskManager.getTaskById(task1.getId());
+        taskManager.newSubTask(subTask1);
         taskManager.getSubTaskById(subTask1.getId());
         taskManager.getEpicById(epic1.getId());
 
@@ -70,5 +67,17 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
         assertEquals(task1.getId(), history.get(0).getId(), "История загружается некорректно");
         assertEquals(epic1.getId(), history.get(1).getId(), "История загружается некорректно");
         assertEquals(subTask1.getId(), history.get(2).getId(), "История загружается некорректно");
+    }
+
+    @Test
+    public void shouldThrowManagerSaveExceptionWhenSaveToNonExistentFile() {
+        final ManagerSaveException exception = assertThrows(
+                ManagerSaveException.class,
+                () -> {
+                    FileBackedTaskManager saveToFile = FileBackedTaskManager.loadFromFile(new File("resources/nonExistent.csv"));
+                    saveToFile.save();
+                }
+        );
+        assertEquals("Не удалось сохранить/загрузить файл", exception.getMessage(), "Исключение не выбросилось");
     }
 }
