@@ -226,8 +226,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void prioritizedTasksSortingTest() {
-        Task task1 = new Task(3, "task", "description", LocalDateTime.of(2023,01,24,15,00), 40L);
-        Task task2 = new Task(4, "task", "description", LocalDateTime.of(2023,01,24,14,00), 40L);
+        task1 = new Task(3, "task", "description", LocalDateTime.of(2023,01,24,15,00), 40L);
+        task2 = new Task(4, "task", "description", LocalDateTime.of(2023,01,24,14,00), 40L);
         Task task3 = new Task(5, "task", "description", LocalDateTime.of(2023,01,24,16,00), 30L);
         taskManager.newTask(task1);
         taskManager.newTask(task2);
@@ -238,4 +238,45 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(task3, testTasks.next(), "Задачи неправильно сортируются");
     }
 
+    @Test
+    public void prioritizedGetInListTest() {
+        task1 = new Task(3, "task", "description", LocalDateTime.of(2023,01,24,15,00), 40L);
+        task2 = new Task(4, "task", "description", LocalDateTime.of(2023,01,24,14,00), 40L);
+        Task task3 = new Task(5, "task", "description", LocalDateTime.of(2023,01,24,16,00), 30L);
+        taskManager.newTask(task1);
+        taskManager.newTask(task2);
+        taskManager.newTask(task3);
+        Iterator<Task> testTasks = taskManager.getPrioritizedTasks().iterator();
+        List<Task> testPrioritized = taskManager.getPrioritizedTasks();
+        assertEquals(testPrioritized.get(0), testTasks.next(), "Задачи не совпадают при переноси из сета в лист");
+        assertEquals(testPrioritized.get(1), testTasks.next(), "Задачи не совпадают при переноси из сета в лист");
+        assertEquals(testPrioritized.get(2), testTasks.next(), "Задачи не совпадают при переноси из сета в лист");
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenUpdateTaskWithWrongTime() {
+        task1 = new Task(3, "task", "description", LocalDateTime.of(2023,01,24,15,00), 40L);
+        task2 = new Task(4, "task", "description", LocalDateTime.of(2023,01,24,14,00), 40L);
+        taskManager.newTask(task1);
+        taskManager.newTask(task2);
+        final DateTimeException exception = assertThrows(
+                DateTimeException.class,
+                () -> {
+                    task2.setDuration(90L);
+                    taskManager.updateTask(task2);
+                }
+        );
+        assertEquals("Задача пересекается с другой по времени", exception.getMessage(),
+                "Задачу можно обновить с временным пересечением");
+    }
+
+    @Test
+    public void removeFromPrioritizedTasksTest() {
+        task1 = new Task(3, "task", "description", LocalDateTime.of(2023,01,24,15,00), 40L);
+        task2 = new Task(4, "task", "description", LocalDateTime.of(2023,01,24,14,00), 40L);
+        taskManager.newTask(task1);
+        taskManager.newTask(task2);
+        taskManager.removeTaskById(task1.getId());
+        assertEquals(1, taskManager.getPrioritizedTasks().size(), "Задача не удаляется из листа с приоритетными задачами");
+    }
 }
