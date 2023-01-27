@@ -33,7 +33,7 @@ public interface TaskManager {
 
     ArrayList<SubTask> getAllSubTasksInEpic(int epicId);
 
-    public Set<Task> getPrioritizedTasks();
+    List<Task> getPrioritizedTasks();
 
     //удаляем задачи по идентификатору
     void removeTaskById(int id);
@@ -55,8 +55,5 @@ public interface TaskManager {
     void updateSubTask(SubTask subTask);
 
     void updateEpic(Epic epic);
-
-    void epicTime(Epic epic);
-    void epicDuration(Epic epic);
 
 }

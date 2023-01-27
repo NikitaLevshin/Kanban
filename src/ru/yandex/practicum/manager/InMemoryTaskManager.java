@@ -55,7 +55,6 @@ public class InMemoryTaskManager implements TaskManager {
         if (validator.test(epic)) {
             if (epic.getId() == null) epic.setId(newId());
             epicMap.put(epic.getId(), epic);
-            prioritizedTasks.add(epic);
         } else {
             throw new DateTimeException("Время старта и конца заданий не должны пересекаться");
         }
@@ -107,20 +106,17 @@ public class InMemoryTaskManager implements TaskManager {
     //получить список всех задач
     @Override
     public ArrayList<Task> getAllTasks() {
-        ArrayList<Task> result = new ArrayList<>(taskMap.values());
-        return result;
+        return new ArrayList<>(taskMap.values());
     }
 
     @Override
     public ArrayList<SubTask> getAllSubTasks() {
-        ArrayList<SubTask> result = new ArrayList<>(subTaskMap.values());
-        return result;
+        return new ArrayList<>(subTaskMap.values());
     }
 
     @Override
     public ArrayList<Epic> getAllEpics() {
-        ArrayList<Epic> result = new ArrayList<>(epicMap.values());
-        return result;
+        return new ArrayList<>(epicMap.values());
     }
 
     @Override
@@ -135,14 +131,15 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Set<Task> getPrioritizedTasks() {
-        return prioritizedTasks;
+    public List<Task> getPrioritizedTasks() {
+        return new ArrayList<>(prioritizedTasks);
     }
 
     //удаляем задачи по идентификатору
     @Override
     public void removeTaskById(int id) {
         historyManager.remove(id);
+        prioritizedTasks.remove(taskMap.get(id));
         taskMap.remove(id);
     }
 
@@ -151,6 +148,7 @@ public class InMemoryTaskManager implements TaskManager {
         Epic oneEpic = epicMap.get((subTaskMap.get(id).getEpicId()));
         oneEpic.removeOneSubTask(subTaskMap.get(id));
         historyManager.remove(id);
+        prioritizedTasks.remove(subTaskMap.get(id));
         subTaskMap.remove(id);
         updateEpicStatus(oneEpic);
     }
@@ -190,16 +188,24 @@ public class InMemoryTaskManager implements TaskManager {
     //обновляем задачи
     @Override
     public void updateTask(Task task) {
-        taskMap.put(task.getId(), task);
+        if (validator.test(task)) {
+            taskMap.put(task.getId(), task);
+        } else {
+            throw new DateTimeException("Задача пересекается с другой по времени");
+        }
     }
 
     @Override
     public void updateSubTask(SubTask subTask) {
-        subTaskMap.put(subTask.getId(), subTask);
-        Epic oneEpic = epicMap.get(subTask.getEpicId());
-        updateEpicStatus(oneEpic);
-        epicTime(epicMap.get(subTask.getEpicId()));
-        epicDuration(epicMap.get(subTask.getEpicId()));
+        if (validator.test(subTask)) {
+            subTaskMap.put(subTask.getId(), subTask);
+            Epic oneEpic = epicMap.get(subTask.getEpicId());
+            updateEpicStatus(oneEpic);
+            epicTime(epicMap.get(subTask.getEpicId()));
+            epicDuration(epicMap.get(subTask.getEpicId()));
+        } else {
+            throw new DateTimeException("Задача пересекается с другой по времени");
+        }
     }
 
     @Override
@@ -208,7 +214,6 @@ public class InMemoryTaskManager implements TaskManager {
         epicMap.put(epic.getId(), epic);
         epicTime(epic);
         epicDuration(epic);
-        prioritizedTasks.add(epic);
     }
 
     public void updateEpicStatus(Epic epic) {
@@ -238,8 +243,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    @Override
-    public void epicTime(Epic epic) {
+    protected void epicTime(Epic epic) {
         LocalDateTime startTime = LocalDateTime.MAX;
         LocalDateTime endTime = LocalDateTime.MIN;
         for (Integer id : epic.getSubTasks()) {
@@ -253,8 +257,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    @Override
-    public void epicDuration(Epic epic) {
+    protected void epicDuration(Epic epic) {
         if (epic.getStartTime() != null && epic.getEndTime() != null) {
             epic.setDuration(Duration.between(epic.getStartTime(), epic.getEndTime()).toMinutes());
         }

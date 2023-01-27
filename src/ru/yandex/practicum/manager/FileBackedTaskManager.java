@@ -244,13 +244,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void epicTime(Epic epic) {
+    protected void epicTime(Epic epic) {
         super.epicTime(epic);
         save();
     }
 
     @Override
-    public void epicDuration(Epic epic) {
+    protected void epicDuration(Epic epic) {
         super.epicDuration(epic);
         save();
     }
