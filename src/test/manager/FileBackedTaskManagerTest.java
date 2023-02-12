@@ -1,7 +1,9 @@
 package test.manager;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.api.KVServer;
 import ru.yandex.practicum.exceptions.ManagerSaveException;
 import ru.yandex.practicum.manager.FileBackedTaskManager;
 import ru.yandex.practicum.model.Epic;
@@ -9,6 +11,7 @@ import ru.yandex.practicum.model.SubTask;
 import ru.yandex.practicum.model.Task;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -16,9 +19,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     final static File file = new File("resources/testTasks.csv");
+    KVServer kvServer;
 
     @BeforeEach
-    void beforeEach() {
+    void beforeEach() throws IOException {
+        kvServer = new KVServer();
+        kvServer.start();
         taskManager = new FileBackedTaskManager(file);
         task1 = new Task("task", "description", LocalDateTime.of(2023,02,24,15,00), 40L);
         task2 = new Task("task2", "description");
@@ -30,6 +36,11 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
                 LocalDateTime.of(2023,02,24,16,00), 45L, epic1.getId());
         subTask2 = new SubTask("subTask2", "description", epic2.getId());
         subTask3 = new SubTask("subTask3", "description", epic1.getId());
+    }
+
+    @AfterEach
+    void afterEach() {
+        kvServer.stop();
     }
 
     @Test

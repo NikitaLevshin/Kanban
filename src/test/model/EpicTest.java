@@ -1,12 +1,16 @@
 package test.model;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.api.KVServer;
 import ru.yandex.practicum.manager.InMemoryTaskManager;
 import ru.yandex.practicum.manager.TaskManager;
 import ru.yandex.practicum.model.Epic;
 import ru.yandex.practicum.model.SubTask;
 import ru.yandex.practicum.model.TaskStatus;
+
+import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,15 +19,22 @@ class EpicTest {
     Epic epic;
     SubTask subTask1;
     SubTask subTask2;
+    KVServer kvServer;
 
     @BeforeEach
-    public void beforeEach() {
+    public void beforeEach() throws IOException {
+        kvServer = new KVServer();
+        kvServer.start();
         testManager = new InMemoryTaskManager();
         epic = new Epic("Epic", "description");
         testManager.newEpic(epic);
         subTask1 = new SubTask("Subtask", "description", epic.getId());
         subTask2 = new SubTask("Subtask2", "description", epic.getId());
 
+    }
+    @AfterEach
+    public void afterEach() {
+        kvServer.stop();
     }
     @Test
     public void epicStatusSubTasksEmptyList() {
