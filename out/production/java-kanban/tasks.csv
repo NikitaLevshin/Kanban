@@ -1,10 +1,7 @@
-id,type,name,status,description,epic
-1,TASK,Переезд,NEW,Переезжаем в новую квартиру,
-2,TASK,Уборка,NEW,Убираем квартиру,
-3,EPIC,Отдых заграницей,NEW,Планирование отдыха,
-4,EPIC,Покупка вещей,NEW,Вещи для отдыха,
-5,SUBTASK,Покупка путевки,NEW,Выбор отеля,3,
-6,SUBTASK,Сбор вещей,NEW,Собираем чемоданы,3,
-7,SUBTASK,Поездка в ТЦ,NEW,Покупаем вещи в ТЦ,3,
-
-2,4,3,5,6,7,1
+id,type,name,status,description,startTime,duration,epic
+3,TASK,task,NEW,description,2023-02-24T15:00,40
+4,TASK,task2,NEW,description,null,null
+1,EPIC,epic1,NEW,description,2023-02-24T16:00,45
+2,EPIC,epic2,NEW,description,null,null
+5,SUBTASK,SubTask,NEW,description,2023-02-24T16:00,45,1
+6,SUBTASK,SubTask,NEW,description,null,null,1
