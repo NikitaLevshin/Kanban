@@ -20,7 +20,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected HashMap<Integer, SubTask> subTaskMap = new HashMap<>();
     protected HashMap<Integer, Epic> epicMap = new HashMap<>();
     protected Set<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime,
-        Comparator.nullsLast(Comparator.naturalOrder())));
+        Comparator.nullsLast(Comparator.naturalOrder())).thenComparing(Task::getId));
 
 
 
@@ -29,6 +29,7 @@ public class InMemoryTaskManager implements TaskManager {
     public int newTask(Task task) {
         if (validator.test(task)) {
             if (task.getId() == null) task.setId(newId());
+            task.updateEndTime();
             taskMap.put(task.getId(), task);
             prioritizedTasks.add(task);
         } else {
@@ -40,6 +41,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public int newSubTask(SubTask subTask) {
         if (validator.test(subTask)) {
+            subTask.updateEndTime();
             if (subTask.getId() == null) subTask.setId(newId());
             subTaskMap.put(subTask.getId(), subTask);
             prioritizedTasks.add(subTask);
@@ -52,12 +54,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int newEpic(Epic epic) {
-        if (validator.test(epic)) {
             if (epic.getId() == null) epic.setId(newId());
             epicMap.put(epic.getId(), epic);
-        } else {
-            throw new DateTimeException("Время старта и конца заданий не должны пересекаться");
-        }
         return epic.getId();
     }
 
@@ -67,7 +65,6 @@ public class InMemoryTaskManager implements TaskManager {
             epicTime(epicMap.get(subTask.getEpicId()));
             epicDuration(epicMap.get(subTask.getEpicId()));
             updateEpicStatus(epic);
-            prioritizedTasks.add(epicMap.get(subTask.getEpicId()));
         }
     }
 
@@ -189,6 +186,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateTask(Task task) {
         if (validator.test(task)) {
+            task.updateEndTime();
             taskMap.put(task.getId(), task);
         } else {
             throw new DateTimeException("Задача пересекается с другой по времени");
@@ -198,6 +196,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateSubTask(SubTask subTask) {
         if (validator.test(subTask)) {
+            subTask.updateEndTime();
             subTaskMap.put(subTask.getId(), subTask);
             Epic oneEpic = epicMap.get(subTask.getEpicId());
             updateEpicStatus(oneEpic);
@@ -273,12 +272,13 @@ public class InMemoryTaskManager implements TaskManager {
                 LocalDateTime sortedTaskEnd = sortedTask.getEndTime();
                 if (taskStartTime == sortedTaskStart || taskEndTime == sortedTaskEnd) return false;
                 if (taskStartTime.isAfter(sortedTaskStart) && taskStartTime.isBefore(sortedTaskEnd)) return false;
-                if (taskEndTime.isAfter(sortedTaskStart) && taskEndTime.isBefore(sortedTaskEnd)) return false;
+                if (taskEndTime != null && (taskEndTime.isAfter(sortedTaskStart) && taskEndTime.isBefore(sortedTaskEnd))) return false;
             }
         }
         return true;
     };
 
+    @Override
     public HistoryManager getHistoryManager() {
         return historyManager;
     }

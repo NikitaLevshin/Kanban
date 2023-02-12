@@ -56,4 +56,6 @@ public interface TaskManager {
 
     void updateEpic(Epic epic);
 
+    public HistoryManager getHistoryManager();
+
 }

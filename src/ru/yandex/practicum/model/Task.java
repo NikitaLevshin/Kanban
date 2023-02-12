@@ -35,6 +35,7 @@ public class Task {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.type = TaskType.TASK;
     }
     public Task(String name, String description, LocalDateTime startTime, Long duration) {
         this.name = name;
@@ -43,7 +44,7 @@ public class Task {
         status = TaskStatus.NEW;
         this.startTime = startTime;
         this.duration = duration;
-        endTime = startTime.plusMinutes(duration);
+        updateEndTime();
     }
 
     public Task(Integer id, String name, String description, LocalDateTime startTime, Long duration) {
@@ -54,7 +55,7 @@ public class Task {
         status = TaskStatus.NEW;
         this.startTime = startTime;
         this.duration = duration;
-        endTime = startTime.plusMinutes(duration);
+        updateEndTime();
     }
     public Task(Integer id, String name, TaskStatus status, String description, LocalDateTime startTime, Long duration) {
         this.id = id;
@@ -64,9 +65,8 @@ public class Task {
         this.status = status;
         this.startTime = startTime;
         this.duration = duration;
-        endTime = startTime.plusMinutes(duration);
+        updateEndTime();
     }
-
 
     public Integer getId() {
         return id;
@@ -121,6 +121,9 @@ public class Task {
 
     public LocalDateTime getEndTime() {
         return endTime;
+    }
+    public void updateEndTime() {
+        if (startTime != null) endTime = startTime.plusMinutes(duration);
     }
 
 

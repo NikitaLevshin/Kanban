@@ -1,15 +1,19 @@
 package ru.yandex.practicum;
 
+import ru.yandex.practicum.manager.InMemoryTaskManager;
 import ru.yandex.practicum.manager.Managers;
 import ru.yandex.practicum.manager.TaskManager;
 import ru.yandex.practicum.model.*;
+
+import java.time.LocalDateTime;
 
 public class Main {
     public static void main(String[] args) {
         //Тестирование
         //Создаем объекты задач, подзадач, и эпиков
 
-        TaskManager taskManager = Managers.getDefault();
+        //TaskManager taskManager = Managers.getDefault();
+        TaskManager taskManager = new InMemoryTaskManager();
         Task movement = new Task("Переезд", "Переезжаем в новую квартиру");
         int movementID = taskManager.newTask(movement);
         Task cleaning = new Task ("Уборка", "Убираем квартиру");
