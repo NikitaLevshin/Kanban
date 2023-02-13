@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public class Epic extends Task{
 
     private final ArrayList<Integer> subTasks = new ArrayList<>();
+    protected LocalDateTime endTime;
 
 
     public Epic(String name, String description) {
@@ -41,6 +42,11 @@ public class Epic extends Task{
 
     public void setEndTime(LocalDateTime time) {
         if (endTime == null || !time.isBefore(endTime)) this.endTime = time;
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
     }
 
     @Override

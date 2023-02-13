@@ -29,7 +29,6 @@ public class InMemoryTaskManager implements TaskManager {
     public int newTask(Task task) {
         if (validator.test(task)) {
             if (task.getId() == null) task.setId(newId());
-            task.updateEndTime();
             taskMap.put(task.getId(), task);
             prioritizedTasks.add(task);
         } else {
@@ -41,7 +40,6 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public int newSubTask(SubTask subTask) {
         if (validator.test(subTask)) {
-            subTask.updateEndTime();
             if (subTask.getId() == null) subTask.setId(newId());
             subTaskMap.put(subTask.getId(), subTask);
             prioritizedTasks.add(subTask);
@@ -186,7 +184,6 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateTask(Task task) {
         if (validator.test(task)) {
-            task.updateEndTime();
             taskMap.put(task.getId(), task);
         } else {
             throw new DateTimeException("Задача пересекается с другой по времени");
@@ -196,7 +193,6 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateSubTask(SubTask subTask) {
         if (validator.test(subTask)) {
-            subTask.updateEndTime();
             subTaskMap.put(subTask.getId(), subTask);
             Epic oneEpic = epicMap.get(subTask.getEpicId());
             updateEpicStatus(oneEpic);

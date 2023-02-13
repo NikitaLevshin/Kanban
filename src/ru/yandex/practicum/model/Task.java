@@ -11,7 +11,6 @@ public class Task {
     protected TaskType type;
     protected LocalDateTime startTime;
     protected Long duration;
-    protected LocalDateTime endTime;
 
 
 
@@ -44,7 +43,7 @@ public class Task {
         status = TaskStatus.NEW;
         this.startTime = startTime;
         this.duration = duration;
-        updateEndTime();
+        getEndTime();
     }
 
     public Task(Integer id, String name, String description, LocalDateTime startTime, Long duration) {
@@ -55,7 +54,7 @@ public class Task {
         status = TaskStatus.NEW;
         this.startTime = startTime;
         this.duration = duration;
-        updateEndTime();
+        getEndTime();
     }
     public Task(Integer id, String name, TaskStatus status, String description, LocalDateTime startTime, Long duration) {
         this.id = id;
@@ -65,7 +64,7 @@ public class Task {
         this.status = status;
         this.startTime = startTime;
         this.duration = duration;
-        updateEndTime();
+        getEndTime();
     }
 
     public Integer getId() {
@@ -120,10 +119,8 @@ public class Task {
     }
 
     public LocalDateTime getEndTime() {
-        return endTime;
-    }
-    public void updateEndTime() {
-        if (startTime != null) endTime = startTime.plusMinutes(duration);
+        if (startTime != null) return startTime.plusMinutes(duration);
+        else return null;
     }
 
 

@@ -1,10 +1,12 @@
 package ru.yandex.practicum;
 
+import ru.yandex.practicum.api.KVServer;
 import ru.yandex.practicum.manager.InMemoryTaskManager;
 import ru.yandex.practicum.manager.Managers;
 import ru.yandex.practicum.manager.TaskManager;
 import ru.yandex.practicum.model.*;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 public class Main {
@@ -12,8 +14,14 @@ public class Main {
         //Тестирование
         //Создаем объекты задач, подзадач, и эпиков
 
-        //TaskManager taskManager = Managers.getDefault();
-        TaskManager taskManager = new InMemoryTaskManager();
+        TaskManager taskManager = Managers.getDefault();
+        KVServer kvServer;
+        try {
+            kvServer = new KVServer();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        kvServer.start();
         Task movement = new Task("Переезд", "Переезжаем в новую квартиру");
         int movementID = taskManager.newTask(movement);
         Task cleaning = new Task ("Уборка", "Убираем квартиру");
