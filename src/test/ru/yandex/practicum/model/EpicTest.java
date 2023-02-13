@@ -1,4 +1,4 @@
-package model;
+package ru.yandex.practicum.model;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

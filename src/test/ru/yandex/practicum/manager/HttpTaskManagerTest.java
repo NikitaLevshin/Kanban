@@ -1,4 +1,4 @@
-package manager;
+package ru.yandex.practicum.manager;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

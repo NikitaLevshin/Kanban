@@ -1,27 +1,26 @@
 package ru.yandex.practicum;
 
 import ru.yandex.practicum.api.KVServer;
-import ru.yandex.practicum.manager.InMemoryTaskManager;
 import ru.yandex.practicum.manager.Managers;
 import ru.yandex.practicum.manager.TaskManager;
 import ru.yandex.practicum.model.*;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 public class Main {
     public static void main(String[] args) {
         //Тестирование
         //Создаем объекты задач, подзадач, и эпиков
-
-        TaskManager taskManager = Managers.getDefault();
         KVServer kvServer;
         try {
             kvServer = new KVServer();
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         kvServer.start();
+
+        TaskManager taskManager = Managers.getDefault();
         Task movement = new Task("Переезд", "Переезжаем в новую квартиру");
         int movementID = taskManager.newTask(movement);
         Task cleaning = new Task ("Уборка", "Убираем квартиру");
@@ -37,7 +36,7 @@ public class Main {
         SubTask clothes = new SubTask("Поездка в ТЦ", "Покупаем вещи в ТЦ", vacation.getId());
         int clothesID = taskManager.newSubTask(clothes);
 
-        taskManager.getEpicById(4);
+/*        taskManager.getEpicById(4);
         taskManager.getEpicById(3);
         taskManager.getTaskById(2);
         taskManager.getTaskById(1);
@@ -50,7 +49,7 @@ public class Main {
         taskManager.getTaskById(2);
         taskManager.getEpicById(4);
         taskManager.getTaskById(1);
-        taskManager.getEpicById(3);
+        taskManager.getEpicById(3);*/
 
     }
 }

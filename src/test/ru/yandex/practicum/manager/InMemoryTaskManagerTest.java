@@ -1,9 +1,10 @@
-package manager;
+package ru.yandex.practicum.manager;
 
 import org.junit.jupiter.api.BeforeEach;
 import ru.yandex.practicum.manager.InMemoryTaskManager;
 
 import java.io.IOException;
+
 
 public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 

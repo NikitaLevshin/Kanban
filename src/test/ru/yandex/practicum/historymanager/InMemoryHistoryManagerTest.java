@@ -1,9 +1,8 @@
-package historymanager;
+package ru.yandex.practicum.historymanager;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.historymanager.HistoryManager;
-import ru.yandex.practicum.historymanager.InMemoryHistoryManager;
+
 import ru.yandex.practicum.model.Epic;
 import ru.yandex.practicum.model.SubTask;
 import ru.yandex.practicum.model.Task;

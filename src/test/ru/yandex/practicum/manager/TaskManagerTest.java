@@ -1,8 +1,6 @@
-package manager;
+package ru.yandex.practicum.manager;
 
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.historymanager.HistoryManager;
-import ru.yandex.practicum.manager.Managers;
 import ru.yandex.practicum.manager.TaskManager;
 import ru.yandex.practicum.model.*;
 

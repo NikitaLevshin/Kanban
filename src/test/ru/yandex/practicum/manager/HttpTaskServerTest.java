@@ -1,4 +1,4 @@
-package manager;
+package ru.yandex.practicum.manager;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
