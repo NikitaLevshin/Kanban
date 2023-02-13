@@ -1,4 +1,4 @@
-package test.manager;
+package manager;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -35,13 +35,13 @@ class HttpTaskServerTest {
     TaskManager taskManager;
     @BeforeEach
     public void beforeEach() throws IOException {
-      httpTaskServer = new HttpTaskServer(new File("resources/httpTestTasks.csv"));
+      httpTaskServer = new HttpTaskServer(new File("testresources/httpTestTasks.csv"));
       httpTaskServer.serverStart();
       gson = new GsonBuilder()
                 .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
                 .serializeNulls()
                 .create();
-      taskManager = new FileBackedTaskManager(new File("resources/httpTestTasks.csv"));
+      taskManager = new FileBackedTaskManager(new File("testresources/httpTestTasks.csv"));
       epic1 = new Epic("epic1", "description");
       taskManager.newEpic(epic1);
       epic2 = new Epic("epic2", "description");

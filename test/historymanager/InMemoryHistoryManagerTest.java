@@ -1,4 +1,4 @@
-package test.historymanager;
+package historymanager;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

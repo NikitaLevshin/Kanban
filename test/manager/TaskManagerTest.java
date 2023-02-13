@@ -1,4 +1,4 @@
-package test.manager;
+package manager;
 
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.historymanager.HistoryManager;

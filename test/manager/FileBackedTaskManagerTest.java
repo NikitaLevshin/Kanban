@@ -1,9 +1,7 @@
-package test.manager;
+package manager;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.api.KVServer;
 import ru.yandex.practicum.exceptions.ManagerSaveException;
 import ru.yandex.practicum.manager.FileBackedTaskManager;
 import ru.yandex.practicum.model.Epic;
@@ -18,13 +16,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
-    final static File file = new File("resources/testTasks.csv");
-    KVServer kvServer;
+    final static File file = new File("testresources/testTasks.csv");
 
     @BeforeEach
     void beforeEach() throws IOException {
-        kvServer = new KVServer();
-        kvServer.start();
         taskManager = new FileBackedTaskManager(file);
         task1 = new Task("task", "description", LocalDateTime.of(2023,02,24,15,00), 40L);
         task2 = new Task("task2", "description");
@@ -38,14 +33,9 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
         subTask3 = new SubTask("subTask3", "description", epic1.getId());
     }
 
-    @AfterEach
-    void afterEach() {
-        kvServer.stop();
-    }
-
     @Test
     public void emptySaveTest() {
-        File emptyFile = new File("resources/emptyTasks.csv");
+        File emptyFile = new File("testresources/emptyTasks.csv");
         FileBackedTaskManager testSave = new FileBackedTaskManager(emptyFile);
         testSave.save();
         FileBackedTaskManager loadFromFile = FileBackedTaskManager.loadFromFile(emptyFile);
